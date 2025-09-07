@@ -1,10 +1,11 @@
-package com.fv.account.api.user.service;
+package com.fv.billpay.api.user.service;
 
-import com.fv.account.api.user.dto.request.UserCreateRequestDto;
-import com.fv.account.api.user.dto.request.UserUpdateRequestDto;
-import com.fv.account.api.user.dto.response.UserPageResponseDto;
-import com.fv.account.api.user.dto.response.UserResponseDto;
-import com.fv.account.api.user.repository.IUserRepository;
+import com.fv.billpay.api.user.dto.request.UserCreateRequestDto;
+import com.fv.billpay.api.user.dto.request.UserUpdateRequestDto;
+import com.fv.billpay.api.user.dto.response.UserPageResponseDto;
+import com.fv.billpay.api.user.dto.response.UserResponseDto;
+import com.fv.billpay.api.user.repository.IUserRepository;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

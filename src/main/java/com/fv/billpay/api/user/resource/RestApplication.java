@@ -1,4 +1,4 @@
-package com.fv.account.api.user.resource;
+package com.fv.billpay.api.user.resource;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;

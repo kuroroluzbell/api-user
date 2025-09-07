@@ -1,4 +1,4 @@
-package com.fv.account.api.user.dto.response;
+package com.fv.billpay.api.user.dto.response;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.fv.account.api.user.util;
+package com.fv.billpay.api.user.util;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

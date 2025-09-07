@@ -1,4 +1,4 @@
-package com.fv.account.api.user.util;
+package com.fv.billpay.api.user.util;
 
 /**
  * Clase de constantes para queries SQL y otros valores globales.

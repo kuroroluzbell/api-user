@@ -1,4 +1,4 @@
-package com.fv.account.api.user.dto.request;
+package com.fv.billpay.api.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,13 +7,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /**
- * DTO para la actualización de usuarios en Keycloak.
+ * DTO para la creación de usuarios en Keycloak.
  */
 @Data
-public class UserUpdateRequestDto {
-    @NotBlank(message = "El id de usuario es obligatorio")
-    private String id;
-
+public class UserCreateRequestDto {
     @NotBlank(message = "El nombre de usuario es obligatorio")
     @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 50 caracteres")
     private String username;
@@ -30,4 +27,8 @@ public class UserUpdateRequestDto {
 
     @NotNull(message = "El estado habilitado es obligatorio")
     private Boolean enabled;
+
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Size(min = 6, max = 100, message = "La contraseña debe tener entre 6 y 100 caracteres")
+    private String password;
 }

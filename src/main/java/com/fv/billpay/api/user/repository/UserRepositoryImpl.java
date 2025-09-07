@@ -1,15 +1,18 @@
-package com.fv.account.api.user.repository;
+package com.fv.billpay.api.user.repository;
 
 import java.util.List;
-import com.fv.account.api.user.dto.request.UserCreateRequestDto;
-import com.fv.account.api.user.dto.request.UserUpdateRequestDto;
-import com.fv.account.api.user.dto.response.UserPageResponseDto;
-import com.fv.account.api.user.dto.response.UserResponseDto;
-import com.fv.account.api.user.util.KeycloakProvider;
+
 import jakarta.inject.Inject;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+
+import com.fv.billpay.api.user.dto.request.UserCreateRequestDto;
+import com.fv.billpay.api.user.dto.request.UserUpdateRequestDto;
+import com.fv.billpay.api.user.dto.response.UserPageResponseDto;
+import com.fv.billpay.api.user.dto.response.UserResponseDto;
+import com.fv.billpay.api.user.util.KeycloakProvider;
+
 import jakarta.ws.rs.core.Response;
 import java.util.Collections;
 import jakarta.enterprise.context.ApplicationScoped;
