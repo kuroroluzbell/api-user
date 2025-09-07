@@ -1,7 +1,6 @@
 package com.fv.billpay.api.user.util;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
