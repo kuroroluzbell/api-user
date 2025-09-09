@@ -11,4 +11,8 @@ public interface IUserService {
     boolean deleteUser(String id);
     UserResponseDto getUserById(String id);
     UserPageResponseDto getAllUsers(int page, int size);
+
+    void assignRealmRoleToUser(String userId, String roleName);
+    void removeRealmRoleFromUser(String userId, String roleName);
+    java.util.List<String> getRealmRolesOfUser(String userId);
 }

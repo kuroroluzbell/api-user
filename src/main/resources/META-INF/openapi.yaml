@@ -1,7 +1,7 @@
 
 openapi: 3.0.3
 info:
-  title: API Empresa
+  title: API User
   version: 1.0.0
 components:
   securitySchemes:

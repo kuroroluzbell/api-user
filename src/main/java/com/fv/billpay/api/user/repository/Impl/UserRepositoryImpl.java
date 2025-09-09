@@ -1,4 +1,4 @@
-package com.fv.billpay.api.user.repository;
+package com.fv.billpay.api.user.repository.Impl;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import com.fv.billpay.api.user.dto.request.UserCreateRequestDto;
 import com.fv.billpay.api.user.dto.request.UserUpdateRequestDto;
 import com.fv.billpay.api.user.dto.response.UserPageResponseDto;
 import com.fv.billpay.api.user.dto.response.UserResponseDto;
+import com.fv.billpay.api.user.repository.IUserRepository;
 import com.fv.billpay.api.user.util.KeycloakProvider;
 
 import jakarta.ws.rs.core.Response;
@@ -139,5 +140,20 @@ public class UserRepositoryImpl implements IUserRepository {
         pageDto.setPage(page);
         pageDto.setSize(size);
         return pageDto;
+    }
+
+    @Override
+    public void assignRealmRoleToUser(String userId, String roleName) {
+        keycloakProvider.assignRealmRoleToUser(userId, roleName);
+    }
+
+    @Override
+    public void removeRealmRoleFromUser(String userId, String roleName) {
+        keycloakProvider.removeRealmRoleFromUser(userId, roleName);
+    }
+
+    @Override
+    public java.util.List<String> getRealmRolesOfUser(String userId) {
+        return keycloakProvider.getRealmRolesOfUser(userId);
     }
 }
