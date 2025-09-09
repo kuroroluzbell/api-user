@@ -69,4 +69,5 @@ public class UserResource {
         UserPageResponseDto response = userService.getAllUsers(page, size);
         return Response.ok(response).build();
     }
+
 }
