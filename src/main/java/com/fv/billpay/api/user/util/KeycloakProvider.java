@@ -32,6 +32,19 @@ public class KeycloakProvider {
     @ConfigProperty(name = "keycloak.admin.password")
     String adminPassword;
 
+    public String getServerUrl() {
+        return serverUrl;
+    }
+    public String getRealm() {
+        return realm;
+    }
+    public String getClientId() {
+        return clientId;
+    }
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
     public Keycloak getInstance() {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)

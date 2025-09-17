@@ -1,11 +1,14 @@
 package com.fv.billpay.api.user.resource;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.fv.billpay.api.user.dto.request.UserCreateRequestDto;
 import com.fv.billpay.api.user.dto.request.UserUpdateRequestDto;
 import com.fv.billpay.api.user.dto.response.UserPageResponseDto;
 import com.fv.billpay.api.user.dto.response.UserResponseDto;
 import com.fv.billpay.api.user.service.IUserService;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -22,16 +25,20 @@ public class UserResource {
     @Inject
     IUserService userService;
 
+    @ConfigProperty(name = "auth.client-token")
+    String expectedClientToken;
+
     @POST
-    //@RolesAllowed({"user", "admin","billpay_user_create"})
-    //@RolesAllowed({"*"})
-    public Response createUser(@Valid UserCreateRequestDto dto) {
+    public Response createUser(@Valid UserCreateRequestDto dto, @HeaderParam("X-Client-Token") String clientToken) {
+        if (clientToken == null || !clientToken.equals(expectedClientToken)) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid client token").build();
+        }
         UserResponseDto response = userService.createUser(dto);
         return Response.status(Response.Status.CREATED).entity(response).build();
     }
 
     @PUT
-    //@RolesAllowed({"user", "admin","billpay_user_update"})
+    @RolesAllowed({"user", "admin","billpay_user_update"})
     public Response updateUser(@Valid UserUpdateRequestDto dto) {
         UserResponseDto response = userService.updateUser(dto);
         return Response.ok(response).build();
@@ -39,7 +46,7 @@ public class UserResource {
 
     @DELETE
     @Path("/{id}")
-    //@RolesAllowed({"user", "admin","billpay_user_delete"})
+    @RolesAllowed({"user", "admin","billpay_user_delete"})
     public Response deleteUser(@PathParam("id") String id) {
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
@@ -51,7 +58,7 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
-//    @RolesAllowed({"user", "admin","billpay_user_selectone"})
+    @RolesAllowed({"user", "admin","billpay_user_selectone"})
     public Response getUserById(@PathParam("id") String id) {
         UserResponseDto response = userService.getUserById(id);
         if (response != null) {
@@ -62,7 +69,7 @@ public class UserResource {
     }
 
     @GET
-    //@RolesAllowed({"user", "admin","billpay_user_selectall"})
+    @RolesAllowed({"user", "admin","billpay_user_selectall"})
     //@RolesAllowed({"*"})
     public Response getAllUsers(@QueryParam("page") @DefaultValue("0") int page,
                                 @QueryParam("size") @DefaultValue("10") int size) {
