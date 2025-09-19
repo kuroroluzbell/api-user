@@ -77,13 +77,13 @@ Sugerencia: crear ExceptionMapper genérico.
 `application.properties` (principales):
 ```
 quarkus.http.port=8089
-keycloak.auth-server-url=http://localhost:8083/
+keycloak.auth-server-url=http://localhost:8080/
 keycloak.realm=master
 keycloak.resource=admin-cli
 keycloak.credentials.secret=<secret>
 keycloak.admin.username=admin
 keycloak.admin.password=admin
-quarkus.oidc.auth-server-url=http://localhost:8083/realms/<realm_app>
+quarkus.oidc.auth-server-url=http://localhost:8080/realms/<realm_app>
 quarkus.oidc.client-id=<client_id>
 quarkus.oidc.credentials.secret=<client_secret>
 ```
