@@ -31,3 +31,5 @@ services:
 networks:
   quarkus-net:
     external: true
+
+#docker-compose up --build api-user
