@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  api-user:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    container_name: api-user-app
+    environment:
+      QUARKUS_HTTP_PORT: 8090
+      KEYCLOAK_URL: http://keycloak:8083/
+      KEYCLOAK_CLIENT_ID: cli_billpay_app
+      KEYCLOAK_CLIENT_SECRET: YGMyRIRzM2qa4hYZFxVVqrSQzRWlrZuB
+      KEYCLOAK_REALM: billpay_app
+      KEYCLOAK_ADMIN_USER: kuroroluzbell
+      KEYCLOAK_ADMIN_PASSWORD: 123456
+      AUTH_CLIENT_TOKEN: YGMyRIRzM2qa4hYZFxVVqrSQzRWlrZuB
+      QUARKUS_LOG_CONSOLE_LEVEL: INFO
+      DB_HOST: postgres17
+      DB_PORT: 5432
+      DB_NAME: db_account
+      DB_USERNAME: user_account
+      DB_PASSWORD: 1234
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: none
+    ports:
+      - "8090:8090"
+    networks:
+      - quarkus-net
+
+networks:
+  quarkus-net:
+    external: true

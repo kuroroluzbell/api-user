@@ -1,8 +1,11 @@
 package com.fv.billpay.api.user.repository.Impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -13,8 +16,11 @@ import com.fv.billpay.api.user.dto.response.UserPageResponseDto;
 import com.fv.billpay.api.user.dto.response.UserResponseDto;
 import com.fv.billpay.api.user.repository.IUserRepository;
 import com.fv.billpay.api.user.util.KeycloakProvider;
+import com.fv.billpay.api.user.entity.User;
 
 import jakarta.ws.rs.core.Response;
+
+import java.time.LocalDateTime;
 import java.util.Collections;
 import jakarta.enterprise.context.ApplicationScoped;
 /**
@@ -25,7 +31,9 @@ public class UserRepositoryImpl implements IUserRepository {
     @Inject
     KeycloakProvider keycloakProvider;
     @Override
+    @Transactional
     public UserResponseDto createUser(UserCreateRequestDto dto) {
+        // Crear usuario en Keycloak
         UsersResource usersResource = keycloakProvider.getUsersResource();
         UserRepresentation user = new UserRepresentation();
         user.setUsername(dto.getUsername());
@@ -33,7 +41,7 @@ public class UserRepositoryImpl implements IUserRepository {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEnabled(dto.getEnabled());
-        user.setEmailVerified(false);
+        user.setEmailVerified(true);
 
         // Set credentials (password)
         CredentialRepresentation credential = new CredentialRepresentation();
@@ -45,16 +53,41 @@ public class UserRepositoryImpl implements IUserRepository {
         Response response = usersResource.create(user);
         if (response.getStatus() == 201) {
             String location = response.getHeaderString("Location");
-            String userId = location != null ? location.substring(location.lastIndexOf("/") + 1) : null;
-            UserResponseDto result = new UserResponseDto();
-            result.setId(userId);
-            result.setUsername(dto.getUsername());
-            result.setEmail(dto.getEmail());
-            result.setFirstName(dto.getFirstName());
-            result.setLastName(dto.getLastName());
-            result.setEnabled(dto.getEnabled());
-            response.close();
-            return result;
+            String keycloakUserId = location != null ? location.substring(location.lastIndexOf("/") + 1) : null;
+            
+            try {
+                // Guardar usuario en PostgreSQL
+                User dbUser = new User();
+                dbUser.setKeycloakId(UUID.fromString(keycloakUserId));
+                dbUser.setUsername(dto.getUsername());
+                dbUser.setEmail(dto.getEmail());
+                dbUser.setFirstName(dto.getFirstName());
+                dbUser.setLastName(dto.getLastName());
+                dbUser.setCreatedAt(LocalDateTime.now());
+                dbUser.persist();
+
+                // Preparar respuesta
+                UserResponseDto result = new UserResponseDto();
+                result.setId(keycloakUserId);
+                result.setUsername(dto.getUsername());
+                result.setEmail(dto.getEmail());
+                result.setFirstName(dto.getFirstName());
+                result.setLastName(dto.getLastName());
+                result.setEnabled(dto.getEnabled());
+                response.close();
+                return result;
+                
+            } catch (Exception e) {
+                // Si falla el guardado en PostgreSQL, intentar eliminar de Keycloak
+                try {
+                    usersResource.get(keycloakUserId).remove();
+                } catch (Exception keycloakException) {
+                    // Log del error pero no lanzar excepción para no ocultar la original
+                    System.err.println("Error al eliminar usuario de Keycloak tras fallo en PostgreSQL: " + keycloakException.getMessage());
+                }
+                response.close();
+                throw new RuntimeException("Error guardando usuario en PostgreSQL: " + e.getMessage(), e);
+            }
         } else {
             String errorMsg = response.readEntity(String.class);
             response.close();
@@ -63,33 +96,55 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     @Override
+    @Transactional
     public UserResponseDto updateUser(UserUpdateRequestDto dto) {
-    UsersResource usersResource = keycloakProvider.getUsersResource();
-    UserRepresentation user = usersResource.get(dto.getId()).toRepresentation();
-    user.setUsername(dto.getUsername());
-    user.setEmail(dto.getEmail());
-    user.setFirstName(dto.getFirstName());
-    user.setLastName(dto.getLastName());
-    user.setEnabled(dto.getEnabled());
+        // Actualizar en Keycloak
+        UsersResource usersResource = keycloakProvider.getUsersResource();
+        UserRepresentation user = usersResource.get(dto.getId()).toRepresentation();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEnabled(dto.getEnabled());
 
-    usersResource.get(dto.getId()).update(user);
+        usersResource.get(dto.getId()).update(user);
 
-    // Devolver el usuario actualizado
-    UserResponseDto result = new UserResponseDto();
-    result.setId(user.getId());
-    result.setUsername(user.getUsername());
-    result.setEmail(user.getEmail());
-    result.setFirstName(user.getFirstName());
-    result.setLastName(user.getLastName());
-    result.setEnabled(user.isEnabled());
-    return result;
+        // Actualizar en PostgreSQL
+        User dbUser = User.find("keycloakId", UUID.fromString(dto.getId())).firstResult();
+        if (dbUser != null) {
+            dbUser.setUsername(dto.getUsername());
+            dbUser.setEmail(dto.getEmail());
+            dbUser.setFirstName(dto.getFirstName());
+            dbUser.setLastName(dto.getLastName());
+            // No actualizar createdAt, solo al crear
+            dbUser.persist();
+        }
+
+        // Devolver el usuario actualizado
+        UserResponseDto result = new UserResponseDto();
+        result.setId(user.getId());
+        result.setUsername(user.getUsername());
+        result.setEmail(user.getEmail());
+        result.setFirstName(user.getFirstName());
+        result.setLastName(user.getLastName());
+        result.setEnabled(user.isEnabled());
+        return result;
     }
 
     @Override
+    @Transactional
     public boolean deleteUser(String id) {
-        UsersResource usersResource = keycloakProvider.getUsersResource();
         try {
+            // Eliminar de Keycloak
+            UsersResource usersResource = keycloakProvider.getUsersResource();
             usersResource.get(id).remove();
+            
+            // Eliminar de PostgreSQL
+            User dbUser = User.find("keycloakId", UUID.fromString(id)).firstResult();
+            if (dbUser != null) {
+                dbUser.delete();
+            }
+            
             return true;
         } catch (Exception e) {
             return false;

@@ -6,8 +6,6 @@ import com.fv.billpay.api.user.repository.IAuthRepository;
 import com.fv.billpay.api.user.util.KeycloakProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-// ...existing code...
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
 

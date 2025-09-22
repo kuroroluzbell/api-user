@@ -9,8 +9,6 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 
 import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.RoleMappingResource;
-import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import java.util.List;
 import java.util.stream.Collectors;

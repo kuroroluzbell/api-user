@@ -89,6 +89,15 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>24.0.3</version>
         </dependency>
+        <!-- PostgreSQL y Hibernate ORM -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-postgresql</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
