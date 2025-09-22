@@ -211,4 +211,22 @@ public class UserRepositoryImpl implements IUserRepository {
     public java.util.List<String> getRealmRolesOfUser(String userId) {
         return keycloakProvider.getRealmRolesOfUser(userId);
     }
+
+    @Override
+    @Transactional
+    public boolean updateProfileImage(String userId, byte[] profileImage) {
+        try {
+            // Actualizar solo en PostgreSQL (Keycloak no maneja imágenes de perfil de esta manera)
+            User dbUser = User.find("keycloakId", UUID.fromString(userId)).firstResult();
+            if (dbUser != null) {
+                dbUser.setProfileImage(profileImage);
+                dbUser.persist();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.err.println("Error actualizando profile_image: " + e.getMessage());
+            return false;
+        }
+    }
 }

@@ -57,4 +57,9 @@ public class UserServiceImpl implements IUserService {
     public java.util.List<String> getRealmRolesOfUser(String userId) {
         return userRepository.getRealmRolesOfUser(userId);
     }
+
+    @Override
+    public boolean updateProfileImage(String userId, byte[] profileImage) {
+        return userRepository.updateProfileImage(userId, profileImage);
+    }
 }

@@ -15,4 +15,6 @@ public interface IUserService {
     void assignRealmRoleToUser(String userId, String roleName);
     void removeRealmRoleFromUser(String userId, String roleName);
     java.util.List<String> getRealmRolesOfUser(String userId);
+    
+    boolean updateProfileImage(String userId, byte[] profileImage);
 }

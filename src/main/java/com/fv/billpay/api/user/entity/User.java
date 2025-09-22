@@ -6,6 +6,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,4 +38,7 @@ public class User extends PanacheEntityBase {
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+    @Column(name = "profile_image")
+    private byte[] profileImage;
 }
